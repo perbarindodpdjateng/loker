@@ -25,12 +25,12 @@ body{
 header{
   display:flex;
   flex-wrap:wrap;
-  gap:6px;
-  padding:4px 0;
+  gap:4px;
+  padding:2px;
 }
 .header-3d{
   background:var(--card);
-  padding:4px 4px;
+  padding:4px;
   border-radius:0;
   flex:1 1 120px;
   min-width:120px;
@@ -38,7 +38,7 @@ header{
 h1{font-size:14px;letter-spacing:0}
 .filter-3d{
   background:var(--card);
-  border-radius:4px;
+  border-radius:2px;
   display:flex;
   align-items:center;
   padding:4px;
@@ -59,7 +59,7 @@ main{
   flex:1;
   display:flex;
   flex-direction:column;
-  padding:0 0 4px 0;
+  padding:2px;
   container-type:inline-size;
 }
 .table-box{
@@ -67,7 +67,8 @@ main{
   overflow:auto;
   background:var(--card);
   border-radius:0;
-  padding:4px;
+  padding:2px;
+  position:relative;     /* penanda relatif untuk loader */
 }
 table{
   width:100%;
@@ -78,13 +79,13 @@ thead{position:sticky;top:0;z-index:2}
 th{
   background:#010409;
   color:var(--accent);
-  padding:4px 4px;
+  padding:4px 2px;
   text-transform:uppercase;
   letter-spacing:.5px;
   border-bottom:1px solid #30363d;
 }
 td{
-  padding:4px 4px;
+  padding:4px 2px;
   border-bottom:1px solid #30363d;
   text-align:center;
 }
@@ -93,31 +94,31 @@ tbody tr:hover td{background:#21262dbb}
 footer{
   display:flex;
   justify-content:center;
-  padding:4px 0;
+  padding:2px;
 }
 .pagi-3d{
   display:flex;
-  gap:4px;
+  gap:2px;
   background:var(--card);
-  padding:4px;
-  border-radius:4px;
+  padding:2px;
+  border-radius:2px;
 }
 .pagi-3d button{
   background:#0d419d;
   border:none;
   color:#fff;
-  padding:4px 4px;
-  border-radius:4px;
+  padding:4px;
+  border-radius:2px;
   cursor:pointer;
   font-size:var(--font);
 }
 .pagi-3d button:hover{background:#1f6feb}
-.pagi-3d button[disabled]{background:#30363d;cursor:not-allowed}
+.pagi-agi-3d button[disabled]{background:#30363d;cursor:not-allowed}
 /* ===== LOADER ===== */
 #loader{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  background:var(--bg);z-index:10;font-size:var(--font);
+  background:rgba(17,17,17,.8);z-index:10;font-size:var(--font);
 }
 .dots::after{content:'';animation:dot 1.2s steps(3,end) infinite}
 @keyframes dot{0%{content:'.'}33%{content:'..'}66%{content:'...'}100%{content:''}}
@@ -137,12 +138,13 @@ footer{
 </header>
 
 <main>
-  <div id="loader" class="dots">Loading</div>
   <div class="table-box">
     <table>
       <thead id="head"></thead>
       <tbody id="body"></tbody>
     </table>
+    <!-- loader ada di dalam card -->
+    <div id="loader" class="dots">Loading</div>
   </div>
   <footer>
     <div class="pagi-3d" id="pagi"></div>
