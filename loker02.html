@@ -231,20 +231,41 @@ td{
 tbody tr:hover{background:rgba(88,166,255,0.05)}
 tbody tr:last-child td{border-bottom:none}
 
-/* Lebar kolom - URL hanya 2 karakter */
-th:nth-child(1),td:nth-child(1){width:25%} /* Nama */
-th:nth-child(2),td:nth-child(2){width:20%} /* Posisi */
-th:nth-child(3),td:nth-child(3){width:15%} /* Tanggal */
-th:nth-child(4),td:nth-child(4){width:15%} /* Status */
-th:nth-child(5),td:nth-child(5){width:25%} /* Keterangan/Detail */
+/* KOLOM 0: INSTANSI - sisa ruang */
+th:nth-child(1),td:nth-child(1){
+  width:auto;
+}
 
-/* Kolom URL terakhir - hanya 2 karakter lebarnya */
-th:last-child,td:last-child{
-  width:24px !important;
-  min-width:24px;
-  max-width:24px;
+/* KOLOM 1: FORMASI - diperlebar */
+th:nth-child(2),td:nth-child(2){
+  width:35%;
+}
+
+/* KOLOM 2: BATAS - fixed 12 karakter */
+th:nth-child(3),td:nth-child(3){
+  width:12ch;
+  min-width:12ch;
+  max-width:12ch;
+  text-align:center;
+}
+
+/* KOLOM 3: URL - fixed 3 karakter */
+th:nth-child(4),td:nth-child(4){
+  width:3ch;
+  min-width:3ch;
+  max-width:3ch;
   text-align:center;
   padding:8px 2px;
+}
+
+/* KOLOM 4: DIHILANGKAN */
+th:nth-child(5),td:nth-child(5){
+  display:none !important;
+}
+
+/* KOLOM 5+ : DIHILANGKAN JUGA */
+th:nth-child(n+5),td:nth-child(n+5){
+  display:none !important;
 }
 
 .badge{
@@ -286,7 +307,7 @@ th:last-child,td:last-child{
   color:var(--accent);
   text-decoration:none;
   border-radius:4px;
-  font-size:12px;
+  font-size:11px;
   border:1px solid rgba(88,166,255,0.2);
   transition:all 0.2s;
   flex-shrink:0;
@@ -491,17 +512,10 @@ th:last-child,td:last-child{
     height:18px;
     font-size:10px;
   }
-  th:last-child,td:last-child{
-    width:20px !important;
-    min-width:20px;
-    max-width:20px;
-    padding:6px 1px;
-  }
-  th:nth-child(1),td:nth-child(1){width:28%}
-  th:nth-child(2),td:nth-child(2){width:22%}
-  th:nth-child(3),td:nth-child(3){width:18%}
-  th:nth-child(4),td:nth-child(4){width:16%}
-  th:nth-child(5),td:nth-child(5){width:16%}
+  /* Mobile: FORMASI tetap lebar, BATAS 11ch, URL 2ch */
+  th:nth-child(2),td:nth-child(2){width:40%}
+  th:nth-child(3),td:nth-child(3){width:11ch;min-width:11ch;max-width:11ch}
+  th:nth-child(4),td:nth-child(4){width:2ch;min-width:2ch;max-width:2ch}
 }
 
 @media(max-width:480px){
@@ -526,6 +540,10 @@ th:last-child,td:last-child{
     flex-shrink:0;
   }
   .page-numbers{display:none}
+  /* Mobile kecil: FORMASI lebih lebar lagi */
+  th:nth-child(2),td:nth-child(2){width:45%}
+  th:nth-child(3),td:nth-child(3){width:11ch;min-width:11ch;max-width:11ch}
+  th:nth-child(4),td:nth-child(4){width:2ch;min-width:2ch;max-width:2ch}
 }
 </style>
 </head>
@@ -535,7 +553,7 @@ th:last-child,td:last-child{
   <div class="brand">
     <div class="brand-icon">🏦</div>
     <div>
-      <h1>BPR/BPRS</h1>
+      <h1>LOWONGAN KERJA DI BPR/BPRS</h1>
     </div>
   </div>
   
@@ -607,10 +625,6 @@ const fmtDate=s=>{
   if(isNaN(d))return s;
   return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 };
-const timeAgo=d=>{
-  const s=Math.floor((new Date()-d)/1000);
-  return s<60?'baru':s<3600?`${Math.floor(s/60)}m`:s<86400?`${Math.floor(s/3600)}j`:`${Math.floor(s/86400)}h`;
-};
 
 async function pull(showLoad=false){
   if(showLoad)loader.classList.add('active');
@@ -654,42 +668,53 @@ function updateStats(){
 }
 
 function render(){
-  head.innerHTML='<tr>'+filtered[0].map((v,i)=>`<th class="sortable ${sortCol===i?(sortAsc?'sort-asc':'sort-desc'):''}" onclick="setSort(${i})">${v}</th>`).join('')+'</tr>';
+  // Render hanya 4 kolom (0-3), kolom 4+ disembunyikan
+  // Index: 0=INSTANSI, 1=FORMASI, 2=BATAS, 3=URL
+  const maxCols=4;
+  const displayHeaders=filtered[0].slice(0,maxCols);
+  
+  head.innerHTML='<tr>'+displayHeaders.map((v,i)=>`<th class="sortable ${sortCol===i?(sortAsc?'sort-asc':'sort-desc'):''}" onclick="setSort(${i})">${v}</th>`).join('')+'</tr>';
   
   if(filtered.length<=1){body.innerHTML='';emptyState.style.display='flex';pagination.innerHTML='';return;}
   emptyState.style.display='none';
   
   const s=(page-1)*ROWS_PER_PAGE+1,e=Math.min(s+ROWS_PER_PAGE,filtered.length);
-  body.innerHTML=filtered.slice(s,e).map((r,i)=>`<tr style="animation:fadeIn 0.2s ease ${i*0.03}s both">${r.map((c,j)=>`<td>${fmtCell(c,j)}</td>`).join('')}</tr>`).join('');
+  body.innerHTML=filtered.slice(s,e).map((r,i)=>{
+    const displayData=r.slice(0,maxCols);
+    return`<tr style="animation:fadeIn 0.2s ease ${i*0.03}s both">${displayData.map((c,j)=>`<td>${fmtCell(c,j)}</td>`).join('')}</tr>`;
+  }).join('');
   
   renderPagination(Math.ceil((filtered.length-1)/ROWS_PER_PAGE));
   $('.table-scroll').scrollTop=0;
 }
 
-function fmtCell(v,i,totalCols){
+function fmtCell(v,i){
   if(!v)return'-';
   const s=String(v);
   
-  // URL selalu di kolom terakhir, hanya simbol 🔗
-  if(s.startsWith('http')){
+  // URL di kolom ke-4 (index 3), hanya simbol 🔗
+  if(i===3 && s.startsWith('http')){
     return`<a href="${v}" target="_blank" class="link-btn" title="${v}"></a>`;
   }
   
-  // Format tanggal (asumsi kolom ke-3)
-  if(i===2)return`<span class="date-cell">${fmtDate(v)}</span>`;
+  // Format tanggal untuk kolom BATAS (index 2)
+  if(i===2){
+    // Jika format tanggal, tampilkan compact
+    if(s.includes('/') || s.includes('-')){
+      return`<span class="date-cell">${fmtDate(v)}</span>`;
+    }
+    return s;
+  }
   
-  // Status badges
+  // Status badges untuk kolom lain
   const map={'aktif':'badge-active','active':'badge-active','pending':'badge-pending','proses':'badge-pending','diterima':'badge-active','ditolak':'badge-pending'};
   if(map[s.toLowerCase()]){
     return`<span class="badge ${map[s.toLowerCase()]}">${v}</span>`;
   }
   
-  // Teks panjang di-wrap
-  if(s.length>100){
-    return`<div class="text-wrap" title="${s}">${s.substring(0,100)}...</div>`;
-  }
-  if(s.length>30){
-    return`<div class="text-wrap">${s}</div>`;
+  // Teks panjang di-wrap untuk FORMASI (index 1)
+  if(i===1 && s.length>50){
+    return`<div class="text-wrap" title="${s}">${s}</div>`;
   }
   
   return s;
