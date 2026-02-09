@@ -95,6 +95,34 @@ h1{font-size:var(--fs-md);font-weight:600;white-space:nowrap}
   letter-spacing:0.3px;
 }
 
+/* Upload Button - Style baru */
+.upload-btn{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:6px 12px;
+  background:var(--success);
+  color:#fff;
+  text-decoration:none;
+  border-radius:var(--radius);
+  font-size:var(--fs-xs);
+  font-weight:600;
+  border:1px solid rgba(35,134,54,0.3);
+  transition:all 0.2s;
+  flex-shrink:0;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.upload-btn:hover{
+  background:#2ea043;
+  transform:translateY(-1px);
+  box-shadow:0 2px 8px rgba(35,134,54,0.3);
+}
+.upload-btn::before{
+  content:'⬆️';
+  font-size:12px;
+}
+
 /* Filter box di header */
 .filter-box{
   position:relative;
@@ -508,6 +536,13 @@ th:nth-child(n+5),td:nth-child(n+5){
   .stats{gap:6px}
   .stat-item{padding:2px 4px}
   .stat-value{font-size:var(--fs-sm)}
+  .upload-btn{
+    padding:5px 8px;
+    font-size:9px;
+  }
+  .upload-btn::before{
+    font-size:10px;
+  }
   .filter-box{
     min-width:80px;
     max-width:120px;
@@ -569,14 +604,18 @@ th:nth-child(n+5),td:nth-child(n+5){
   .stats{
     order:2;
   }
-  .filter-box{
+  .upload-btn{
     order:3;
+    flex-basis:auto;
+  }
+  .filter-box{
+    order:4;
     flex-basis:calc(100% - 80px);
     max-width:none;
     min-width:auto;
   }
   .live-pill{
-    order:4;
+    order:5;
     flex-shrink:0;
   }
   .page-numbers{display:none}
@@ -624,6 +663,11 @@ th:nth-child(n+5),td:nth-child(n+5){
     </div>
   </div>
 
+  <!-- Tombol Upload Loker - Sejajar dengan stats -->
+  <a href="https://forms.gle/HCou7PKxVHy8ZYhh8" target="_blank" class="upload-btn" title="Upload Loker Baru">
+    Upload Loker
+  </a>
+
   <div class="filter-box" id="filter-box">
     <input id="filter" placeholder="Cari..." autocomplete="off"/>
     <button class="clear-btn" onclick="clearFilter()" title="Clear">×</button>
@@ -661,7 +705,7 @@ th:nth-child(n+5),td:nth-child(n+5){
 </div>
 
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbwXbg5SILF0GbqTw5gbv_XkQTTpIH6camaf5bhnLU5jTOxeoVdZ5wEeurjsDoXoIOL-/exec ';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwXbg5SILF0GbqTw5gbv_XkQTTpIH6camaf5bhnLU5jTOxeoVdZ5wEeurjsDoXoIOL-/exec  ';
 const ROWS_PER_PAGE=10,REFRESH_MS=10000;
 let raw=[[]],filtered=[[]],page=1,sortCol=-1,sortAsc=true,lastHash='';
 
