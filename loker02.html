@@ -337,11 +337,18 @@ th:nth-child(n+5),td:nth-child(n+5){
   color:var(--warning);
   border:1px solid rgba(210,153,34,0.3);
 }
+/* Date cell dengan wrap - max 8 karakter */
 .date-cell{
   font-family:monospace;
-  font-size:var(--fs-xs);
+  font-size:9px;
   color:var(--accent);
-  white-space:nowrap;
+  line-height:1.2;
+  display:block;
+  max-width:100%;
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+  word-break:break-all;
+  white-space:normal;
 }
 
 /* Link Button - Hanya simbol 🔗 */
